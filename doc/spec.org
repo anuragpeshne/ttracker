@@ -1,0 +1,6 @@
+* Log Format
+  #+BEGIN_SRC text
+  2018-01-31 22:00 40m
+    Task/description
+    Work:Thesis:read docs
+  #+END_SRC
