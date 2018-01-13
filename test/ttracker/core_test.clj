@@ -13,7 +13,7 @@
     (let [file "/tmp/ttracker.log"
           desc "this is test description"
           tags "Tag1:Tag2"
-          duration "40m"
+          duration "40"
           [pduration pfile ptags pdesc perr] (parse-args
                                                "-d" desc
                                                "-t" tags
@@ -21,7 +21,7 @@
                                                duration)
 
           [eduration efile etags edesc eerr] (parse-args)]
-      (is (= duration pduration))
+      (is (= (Integer/parseInt duration) (Integer/parseInt pduration)))
       (is (= file pfile))
       (is (= tags ptags))
       (is (= desc pdesc))

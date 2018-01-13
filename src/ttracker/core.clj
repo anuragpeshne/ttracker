@@ -54,7 +54,7 @@
     (.newLine wrtr)))
 
 (defn parse-args
-  [& args]
+  [args]
   (let [cli-options
         [["-f" "--file \"path/to/file\"" :required "File"
           :id :file]
@@ -68,7 +68,7 @@
         parsed-args (parse-opts args cli-options)
         duration  (-> parsed-args :arguments (get 0))
         file-path (-> parsed-args :options :file)
-        tags      (-> parsed-args :options :tags)
+        tags      (-> parsed-args :options :tags (clojure.string/split #":"))
         desc      (-> parsed-args :options :desc)
         errors    (-> parsed-args :errors)
         errors (if (nil? file-path) (conj errors "file is required") errors)
