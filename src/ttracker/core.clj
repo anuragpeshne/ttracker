@@ -1,4 +1,5 @@
 (ns ttracker.core
+  (:require [clojure.tools.cli :refer [parse-opts]])
   (:gen-class))
 (use 'clojure.java.io)
 
@@ -52,14 +53,36 @@
     (.write wrtr (indent (clojure.string/join ":" tags)))
     (.newLine wrtr)))
 
+(defn parse-args
+  [& args]
+  (let [cli-options
+        [["-f" "--file \"path/to/file\"" :required "File"
+          :id :file]
+         ["-d" "--description \"description here\"" "Description"
+         :id :desc
+         :default "NA"]
+         ["-t" "--tags \"Tag:SubTag\"" "Tags"
+         :id :tags
+         :default "Untagged"]
+         ["-h" "--help"]]
+        parsed-args (parse-opts args cli-options)
+        duration  (-> parsed-args :arguments (get 0))
+        file-path (-> parsed-args :options :file)
+        tags      (-> parsed-args :options :tags)
+        desc      (-> parsed-args :options :desc)
+        errors    (-> parsed-args :errors)
+        errors (if (nil? file-path) (conj errors "file is required") errors)
+        errors (if (nil? duration) (conj errors "specify duration is required") errors)]
+    [duration file-path tags desc errors]))
+
 (defn -main
   "entry point: parses args and calls next function."
-  [pomo-min & tags]
-  (let [start-time (java.time.LocalDateTime/now)
-        file-path "/tmp/ttracker.log"]
+  [& args]
+  (let [[duration file-path tags desc errors] (parse-args args)
+        start-time (java.time.LocalDateTime/now)]
     (println (str "Session started at " (format-display-time start-time)))
-    ;(Thread/sleep (* 60 1000 (Integer/parseInt pomo-min)))
-    (osx-notify pomo-min "Time's up")
+    (Thread/sleep (* 60 1000 (Integer/parseInt duration)))
+    (osx-notify duration"Time's up")
     (let [end-time (java.time.LocalDateTime/now)]
       (println (str "Session ended at   " (format-display-time end-time)))
-      (write-record file-path [start-time, pomo-min, "test", tags]))))
+      (write-record file-path [start-time, duration, desc, tags]))))
