@@ -1,6 +1,13 @@
 * Log Format
+  #+BEGIN_SRC ledger
+  [date] [start-time] [description]
+    [tags]                                   [time-spent]
+    [from acc] # optional: to maintain compatibility with ledger
+  #+END_SRC
+
+  Example:
   #+BEGIN_SRC text
-  2018-01-31 22:00 40m
-    Task/description
-    Work:Thesis:read docs
+  2018/01/31 22:00 change the `ttracker` spec to match `ledger`
+    Work:side projects:ttracker                             30m
+    Untracked:2018-01-31
   #+END_SRC

@@ -15,6 +15,11 @@
   (let [formatter (java.time.format.DateTimeFormatter/ofPattern "yyyy-MM-dd HH:mm:ss")]
     (.format time formatter)))
 
+(defn- format-write-date
+  [time]
+  (let [formatter (java.time.format.DateTimeFormatter/ofPattern "yyyy-MM-dd")]
+    (.format time formatter)))
+
 (defn- indent
   "This is a simple function to prepend `inp-str` with spaces."
   [inp-str]
@@ -46,11 +51,12 @@
   "
   [file-path, [start-time, duration, description, tags]]
   (with-open [wrtr (writer file-path :append true)]
-    (.write wrtr (str (format-write-time start-time) " " duration "m"))
+    (.write wrtr (str (format-write-time start-time) " " description))
     (.newLine wrtr)
-    (.write wrtr (indent description))
+    (.write wrtr (str (indent (clojure.string/join ":" tags))
+                      (indent (str duration "m"))))
     (.newLine wrtr)
-    (.write wrtr (indent (clojure.string/join ":" tags)))
+    (.write wrtr (indent (str "Untracked:" (format-write-date start-time))))
     (.newLine wrtr)))
 
 (defn parse-args
