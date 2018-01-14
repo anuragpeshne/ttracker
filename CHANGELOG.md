@@ -5,20 +5,14 @@ All notable changes to this project will be documented in this file. This change
 ### Changed
 - Add a new arity to `make-widget-async` to provide a different widget shape.
 
-## [0.1.1] - 2018-01-09
+## [1.0] - 2018-01-13
 ### Changed
-- Documentation on how to make the widgets.
-
-### Removed
-- `make-widget-sync` - we're all async, all the time.
+- Pomodoro styled timer added.
+- Generated logs are compatible with `ledger-cli`
+- Added option to add `tags`, `description`, `file-path` and `duration`.
 
 ### Fixed
-- Fixed widget maker to keep working when daylight savings switches over.
-
-## 0.1.0 - 2018-01-09
-### Added
-- Files from the new template.
-- Widget maker public API - `make-widget-sync`.
+- Exit on missing required arguments (`file-path` and `duration`).
 
 [Unreleased]: https://github.com/your-name/ttracker/compare/0.1.1...HEAD
 [0.1.1]: https://github.com/your-name/ttracker/compare/0.1.0...0.1.1
