@@ -77,8 +77,8 @@
         tags      (-> parsed-args :options :tags (clojure.string/split #":"))
         desc      (-> parsed-args :options :desc)
         errors    (-> parsed-args :errors)
-        errors (if (nil? file-path) (conj errors "file is required") errors)
-        errors (if (nil? duration) (conj errors "specify duration is required") errors)]
+        errors (if (nil? file-path) (conj errors "No log file was specified (please use -f)") errors)
+        errors (if (nil? duration) (conj errors "No timer duration was specified.") errors)]
     [duration file-path tags desc errors]))
 
 (defn -main
@@ -86,9 +86,14 @@
   [& args]
   (let [[duration file-path tags desc errors] (parse-args args)
         start-time (java.time.LocalDateTime/now)]
-    (println (str "Session started at " (format-display-time start-time)))
-    (Thread/sleep (* 60 1000 (Integer/parseInt duration)))
-    (osx-notify duration"Time's up")
-    (let [end-time (java.time.LocalDateTime/now)]
-      (println (str "Session ended at   " (format-display-time end-time)))
-      (write-record file-path [start-time, duration, desc, tags]))))
+    (if (nil? errors)
+      (do
+        (println (str "Session started at " (format-display-time start-time)))
+        (Thread/sleep (* 60 1000 (Integer/parseInt duration)))
+        (osx-notify duration"Time's up")
+        (let [end-time (java.time.LocalDateTime/now)]
+          (println (str "Session ended at   " (format-display-time end-time)))
+          (write-record file-path [start-time, duration, desc, tags])))
+      (do ;; else
+        (println (str "Error(s):\n" (clojure.string/join "\n" errors)))
+        (System/exit 1)))))
