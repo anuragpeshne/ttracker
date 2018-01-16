@@ -17,13 +17,13 @@
 
 (defn- format-write-date
   [time]
-  (let [formatter (java.time.format.DateTimeFormatter/ofPattern "yyyy-MM-dd")]
+  (let [formatter (java.time.format.DateTimeFormatter/ofPattern "yyyy/MM/dd")]
     (.format time formatter)))
 
 (defn- indent
-  "This is a simple function to prepend `inp-str` with spaces."
+  "This is a simple function to prepend `inp-str` with 4 spaces."
   [inp-str]
-  (str "  " inp-str))
+  (str "    " inp-str))
 
 (defn osx-notify
   "Takes in message, title and shows native OSX desktop notification."
@@ -72,13 +72,16 @@
          :default "Untagged"]
          ["-h" "--help"]]
         parsed-args (parse-opts args cli-options)
-        duration  (-> parsed-args :arguments (get 0))
-        file-path (-> parsed-args :options :file)
-        tags      (-> parsed-args :options :tags (clojure.string/split #":"))
-        desc      (-> parsed-args :options :desc)
-        errors    (-> parsed-args :errors)
-        errors (if (nil? file-path) (conj errors "No log file was specified (please use -f)") errors)
-        errors (if (nil? duration) (conj errors "No timer duration was specified.") errors)]
+        duration     (-> parsed-args :arguments (get 0))
+        file-path    (-> parsed-args :options :file)
+        tags         (-> parsed-args :options :tags (clojure.string/split #":"))
+        desc         (-> parsed-args :options :desc)
+        parse-errors (-> parsed-args :errors)
+        errors       (reduce (fn [errors, [field err-msg]]
+                               (if (nil? field) (conj errors, err-msg) errors))
+                             parse-errors
+                             (list [file-path "No log file was specified (please use -f)"]
+                                   [duration  "No timer duration was specified."]))]
     [duration file-path tags desc errors]))
 
 (defn -main
