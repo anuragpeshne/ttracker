@@ -12,12 +12,12 @@
 
 (defn- format-write-time
   [time]
-  (let [formatter (java.time.format.DateTimeFormatter/ofPattern "yyyy-MM-dd HH:mm:ss")]
+  (let [formatter (java.time.format.DateTimeFormatter/ofPattern "yyyy/MM/dd HH:mm:ss")]
     (.format time formatter)))
 
-(defn- format-write-date
+(defn- format-untracked-date
   [time]
-  (let [formatter (java.time.format.DateTimeFormatter/ofPattern "yyyy/MM/dd")]
+  (let [formatter (java.time.format.DateTimeFormatter/ofPattern "yyyy-MM-dd")]
     (.format time formatter)))
 
 (defn- indent
@@ -45,7 +45,7 @@
 (defn write-record
   "Takes in time-record and writes it to a file.
   Log example:
-  2018-01-31 22:00 40m
+  2018/01/31 22:00 40m
     Task/description
     Work:Thesis:read docs
   "
@@ -56,7 +56,7 @@
     (.write wrtr (str (indent (clojure.string/join ":" tags))
                       (indent (str duration "m"))))
     (.newLine wrtr)
-    (.write wrtr (indent (str "Untracked:" (format-write-date start-time))))
+    (.write wrtr (indent (str "Untracked:" (format-untracked-date start-time))))
     (.newLine wrtr)))
 
 (defn parse-args
